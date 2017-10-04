@@ -4,6 +4,15 @@ const headers = {
     'Accept': 'application/json'
 };
 
+
+export const getResult = () =>
+    fetch(`${api}/calculate`)
+        .then(res => res.json())
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
+
 export const performCalc = (payload) =>
 
     fetch(`${api}/calculate`, {
@@ -12,12 +21,10 @@ export const performCalc = (payload) =>
             ...headers,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload)
+        body: payload
     }).then(res => {
-
-        return res;
-    })
-        .catch(error => {
+        return res.status;
+    }).catch(error => {
             console.log("This is error");
             return error;
         });

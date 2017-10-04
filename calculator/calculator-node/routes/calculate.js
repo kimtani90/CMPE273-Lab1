@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
+var result=0;
 
 router.get('/', function(req, res) {
-    res.send('respond with a resource');
+    res.status(200).send(result);
 });
 
 router.post('/', function (req, res) {
@@ -14,7 +15,7 @@ router.post('/', function (req, res) {
 
     var inputArr=input.split(" ");
 
-    var result=0;
+
 
     for(var i=0;i< inputArr.length;i++){
 
@@ -27,10 +28,10 @@ router.post('/', function (req, res) {
 
     if(result !== 0){
 
-        res.status(201);
+        res.status(201).end();/*
         res.send(JSON.stringify({"result":result}));
         res.body(JSON.stringify({"result":result}));
-
+*/
 
     } else {
         res.status(401);

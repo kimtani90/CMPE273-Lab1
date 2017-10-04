@@ -5,7 +5,7 @@ const headers = {
 };
 
 export const doLogin = (payload) =>
-    fetch(`${api}/users/doLogin`, {
+    fetch(`${api}/users/`, {
         method: 'POST',
         headers: {
             ...headers,
@@ -19,3 +19,41 @@ export const doLogin = (payload) =>
             console.log("This is error");
             return error;
         });
+
+export const createUser = (payload) =>
+    fetch(`${api}/users/signup`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    }).then(res => {
+        return res.status;
+    })
+        .catch(error => {
+            console.log("This is error");
+            return error;
+        });
+
+
+
+export const getImages = () =>
+    fetch(`${api}/files/`)
+        .then(res => res.json())
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
+
+export const uploadFile = (payload) =>
+    fetch(`${api}/files/upload`, {
+        method: 'POST',
+        body: payload
+    }).then(res => {
+        return res.status;
+    }).catch(error => {
+        console.log("This is error");
+        return error;
+    });
+

@@ -7,11 +7,20 @@ var cors = require('cors');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var fileupload = require('./routes/fileupload');
+var session = require('client-sessions');
 
 var app = express();
 
 //Enable CORS
 app.use(cors());
+
+
+app.use(session({
+    cookieName: 'session',
+    secret: 'cmpe273_dropbox_string',
+    duration: 30 * 60 * 1000,    //setting the time for active session
+    activeDuration: 5 * 60 * 1000,  })); // setting time for the session to be active when the window is open // 5 minutes set currently
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +36,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/files', fileupload);
+
+app.use('./public/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

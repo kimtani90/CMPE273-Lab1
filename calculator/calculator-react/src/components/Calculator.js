@@ -10,11 +10,20 @@ class Calculator extends React.Component {
         API.performCalc(userdata)
             .then((res) => {
                 if (res.status === 201) {
-                    console.log(res);
+
                     this.setState({
                         input:'',
-                        displayValue:res.body.result
+                        displayValue:data
+
                     });
+                    /*API.getResult()
+                        .then((data) => {
+                            this.setState({
+                                input:'',
+                                displayValue:data
+
+                            });
+                        });*/
 
                 } else if (res.status === 401) {
                     this.setState({
@@ -23,6 +32,7 @@ class Calculator extends React.Component {
                     });
                 }
             });
+
     };
 
     state={
