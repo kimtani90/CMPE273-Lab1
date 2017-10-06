@@ -21,10 +21,12 @@ export const performCalc = (payload) =>
             ...headers,
             'Content-Type': 'application/json'
         },
-        body: payload
+        body: JSON.stringify(payload)
     }).then(res => {
-        return res.status;
-    }).catch(error => {
+        return res.json()
+
+    })
+        .catch(error => {
             console.log("This is error");
             return error;
         });

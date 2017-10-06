@@ -7,13 +7,15 @@ import * as API from '../api/API';
 class Calculator extends React.Component {
 
     handleSubmit = (userdata) => {
+
         API.performCalc(userdata)
             .then((res) => {
+            console.log(res.result);
                 if (res.status === 201) {
 
                     this.setState({
                         input:'',
-                        displayValue:data
+                        displayValue:res.result
 
                     });
                     /*API.getResult()

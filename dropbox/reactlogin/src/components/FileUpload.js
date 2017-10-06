@@ -46,11 +46,8 @@ class FileUpload extends Component {
 
     render() {
         return (
-            <div >
-                <button className="btn btn-primary btn-block" type="submit"
-                        onClick={() => this.handleSubmit(this.state)}>
-                    Sign in
-                </button>
+            <div className="jumbotron">
+
                 <Typography
                     align={'center'}
                     type="display3"
@@ -70,5 +67,6 @@ class FileUpload extends Component {
         );
     }
 }
+
 
 export default FileUpload;
