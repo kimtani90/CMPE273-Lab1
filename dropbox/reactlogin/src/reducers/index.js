@@ -1,44 +1,64 @@
-import {ADD_TODO, DONE_TODO} from "../actions/index";
+import {LOGIN} from "../actions/index";
+import SignUp from "../components/SignUp";
+
 
 // https://github.com/reactjs/react-redux/blob/d5bf492ee35ad1be8ffd5fa6be689cd74df3b41e/src/components/createConnect.js#L91
 const initialState = {
-    users :[{
-        firstName: '',
-        lastName: '',
-        username: '',
-        password: '',
-        email: '',
-        contactNo: '',
-        files: [],
-        directories: []
+
+    firstName: '',
+    lastName: '',
+    password: '',
+    email: '',
+    contactNo: '',
+    interests:'',
+    lastLoginTime:'',
+
+    files :[{
+        fileName: '',
+        filePath:'',
+        fileParent: '',
+        isFile: ''
+    }],
+
+    groups: [{
+        groupName: ''
+    }],
+
+    userLog:[{
+        action:'',
+        fileName : '',
+        activityTime:''
     }]
+
+
 };
 
 const userdata = (state = initialState, action) => {
-    console.log(state.items[action.newItem]);
+    console.log("xxxxxxxxxxxxxxxxxxxxx");
+    console.log(action.payload);
     switch (action.type) {
 
-        case ADD_TODO :
+        case LOGIN :
             return {
-                ...state,
-
-                items:{...state.items,
-                    [action.newItem] : { price: state.items[action.newItem].price,
-                        status:'active', qty: Number(state.items[action.newItem].qty)+1}
-                }, total : state.total + Number(state.items[action.newItem].price)
-
+                    ...state,
+                    email: action.payload.email,
+                    password: action.payload.password
             };
 
-        case DONE_TODO :
+        /*case SIGNUP :
             return {
                 ...state,
-
-                items:{...state.items,
-                    [action.changedTodo] : { price: state.items[action.changedTodo].price,
-                        status: state.items[action.changedTodo].qty===1?'cancel':'active', qty:state.items[action.changedTodo].qty-1}
-                }, total : state.total - Number(state.items[action.changedTodo].price)
-
+                user:{
+                    ...state.user,
+                    firstName: '',
+                    lastName: '',
+                    username: action.payload.username,
+                    password: action.payload.password,
+                    email: '',
+                    contactNo: ''
+                }
             };
+*/
 
         default :
             return state;

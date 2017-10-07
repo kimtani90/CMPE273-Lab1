@@ -3,9 +3,13 @@ var router = express.Router();
 var multer = require('multer');
 var glob = require('glob');
 var mysql = require('./mysql');
+var fs = require('fs');
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        console.log("Hellloooonnnn")
+        console.log(req.email);
+
         cb(null, './public/uploads/')
     },
     filename: function (req, file, cb) {
@@ -19,48 +23,13 @@ var storage = multer.diskStorage({
 var upload = multer({storage:storage});
 
 
-/* GET users listing. */
+
 router.get('/', function (req, res) {
-
-
-
-    /*var filename = req.body.username;
-    var reqPassword = req.body.password;
-
-    // check user already exists
-    var getUser="select * from users where username='"+reqUsername+"' and password='" + reqPassword +"'";
-    console.log("Query is:"+getUser);
-
-    mysql.fetchData(function(err,results){
-        if(err){
-            throw err;
-        }
-        else
-        {
-            if(results.length > 0){
-                req.session.username = reqUsername;
-                console.log("valid Login");
-                res.status(201).json({message: "Login successful"});
-            }
-            else {
-
-                console.log("Invalid Login");
-                res.status(401).json({message: "Login failed"});
-            }
-        }
-    },getUser);
-
-
-*/
-
-
-
-
 
     var resArr = [];
 
     glob("public/uploads/*", function (er, files) {
-console.log(files);
+        console.log(files);
         var resArr = files.map(function (file) {
             console.log(file);
             var imgJSON = {};
@@ -77,12 +46,13 @@ console.log(files);
 
 router.post('/upload', upload.single('mypic'), function (req, res) {
 
-    console.log(req.file); //file details
-
-
+    console.log(req.body);
     var fileName = req.file.filename;
     var fileLocation = req.file.path;
 
+
+
+    fs.createReadStream('./public/uploads/'+req.file.filename).pipe(fs.createWriteStream('./public/uploads/'+req.body.email+'/'+req.file.filename));
 
     // check user already exists
     var insertFile="insert into Files (filename, filelocation) values ( '"+fileName
@@ -90,9 +60,19 @@ router.post('/upload', upload.single('mypic'), function (req, res) {
 
     console.log("Query is:"+insertFile);
 
-    mysql.insertData(insertFile);
 
-            res.status(204).end();
+    mysql.insertData(function(err){
+        if(err){
+            res.status(401).json({message: "File Error!"});
+        }
+        else
+        {
+
+            res.status(204).json({message: "File Uploaded Successfully!"});
+
+        }
+    },insertFile);
+
 });
 
 module.exports = router;

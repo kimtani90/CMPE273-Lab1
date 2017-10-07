@@ -4,6 +4,7 @@ import Panel from 'react-panels';
 import {withStyles} from 'material-ui/styles';
 import '../FileUpload.css';
 
+/*
 
 const styles = theme => ({
     root: {
@@ -17,6 +18,7 @@ const styles = theme => ({
         width: '100%',
     },
 });
+*/
 
 class ImageGridList extends Component {
 
@@ -32,9 +34,9 @@ class ImageGridList extends Component {
             <div className="container-fluid">
             <div className="row">
                 <div className="col-sm-2 sidenav">
-                    <nav class="col-sm-2">
-                        <ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="205">
-                            <li class="active"><a href="#section1">Section 1</a></li>
+                    <nav className="col-sm-2">
+                        <ul className="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="205">
+                            <li className="active"><a href="#section1">Section 1</a></li>
                             <li><a href="#section2">Section 2</a></li>
                             <li><a href="#section3">Section 3</a></li>
                         </ul>
@@ -101,4 +103,4 @@ class ImageGridList extends Component {
 }
 
 
-export default withStyles(styles)(ImageGridList);
+export default ImageGridList;

@@ -11,7 +11,7 @@ class Login extends Component {
     };*/
 
     state = {
-        username: '',
+        email: '',
         password: ''
     };
 
@@ -22,10 +22,10 @@ class Login extends Component {
                 <img className="profile-img" src={dropbox}
                      alt=""/>
 
-                <input type="text" className="form-control" placeholder="Email" required autoFocus
+                <input type="email" className="form-control" placeholder="Email" required autoFocus
                        onChange={(event) => {
                            this.setState({
-                               username: event.target.value
+                               email: event.target.value
                            });
                        }}/>
                 <br/>

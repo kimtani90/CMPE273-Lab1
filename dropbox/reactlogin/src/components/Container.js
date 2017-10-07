@@ -5,48 +5,29 @@ import '../Login.css';
 import SignUp from "./SignUp";
 import FileUpload from "./FileUpload";
 import Login from "./Login";
+import {connect} from 'react-redux';
+import {afterlogin} from "../actions/index";
 
 
 class Container extends Component {
 
-   /* constructor(){
-        super();
-        this.state = {
-            isLoggedIn: false,
-            message:'',
-            username: '',
-            login: "SI"
-        };
-
-    }
-
-
-     componentWillMount(){
-         console.log('aaaaa');
-         this.setState({
-             ...this.state,
-             isLoggedIn: false,
-             message:'',
-             username: ''
-         });
-     }*/
-
+    state = {
+        login: "SI",
+        message: ''
+    };
 
     login = (userdata) =>{
 
         API.doLogin(userdata)
             .then((status)  => {
                 if (status === 201) {
-                    /*this.setState({
-                        isLoggedIn: true,
 
-                        username: userdata.username
-                    });*/
-                    this.props.dologin(item.todo)
+                    this.props.afterlogin(userdata);
                     this.props.history.push("/files");
+
                 } else if (status === 401) {
                     this.setState({
-                        isLoggedIn: false,
+
                         message: "Wrong username or password. Try again..!!"
                     });
                 }
@@ -57,7 +38,7 @@ class Container extends Component {
 
         console.log(data);
         this.setState({
-            ...this.state,
+            message:'',
             login:data
         });
     };
@@ -67,16 +48,15 @@ class Container extends Component {
         API.createUser(userdata)
             .then((status)  => {
                 if (status === 201) {
+                    console.log("Saveddd");
                     this.setState({
 
-                        message: "User created"
+                        message: "User details saved successfully!"
                     });
-
-
                 } else if (status === 401) {
                     this.setState({
 
-                        message: "Error inserting data. Try again..!!"
+                        message: "Email already exists!"
                     });
                 }
             });
@@ -92,24 +72,19 @@ class Container extends Component {
                 }
 
 
-                        <h1 className="text-center login-title"></h1>
-                        <div className="account-wall">
-                            <div className="col-md-12">
+                <h1 className="text-center login-title"></h1>
+                <div className="account-wall">
+                    <div className="col-md-12">
+
+                        {this.state.login === "SU" ?
+                            <SignUp signUp={this.signUp} loginOrSignup={this.loginOrSignup}/>
+                            :
+                            <Login login={this.login} loginOrSignup={this.loginOrSignup}/>
+                        }
 
 
-                                {this.state.login === "SU" ?
-                                    <SignUp signUp={this.signUp} loginOrSignup={this.loginOrSignup}/>
-                                    :
-                                    <Login login={this.login} loginOrSignup={this.loginOrSignup}/>
-                                }
-
-
-                            </div>
-                        </div>
-
-
-
-
+                    </div>
+                </div>
             </div>
 
 
@@ -122,27 +97,11 @@ class Container extends Component {
 }
 
 
-
-function mapStateToProps(state) {
-
-    userdata : state.userdata;
-    console.log(todos);
-    const todoArr = Object.keys(todos.items).map((item) => (
-        {
-            'todo' : item,
-            'desc' : todos.items[item]
-        }
-    ));
-
-    const total = todos.total;
-
-    return {todoArr, total};
-}
-
 function mapDispatchToProps(dispatch) {
     return {
-        addTodo : (data) => dispatch(addTodo(data))
+        afterlogin : (data) => dispatch(afterlogin(data))
     };
+
 }
 
-export default withRouter (connect(null, mapDispatchToProps)(Container));
+export default withRouter(connect(null, mapDispatchToProps)(Container));

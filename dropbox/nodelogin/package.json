@@ -17,6 +17,7 @@
     "multer": "^1.3.0",
     "serve-favicon": "~2.4.2",
     "mysql": "*",
-    "client-sessions": "*"
+    "client-sessions": "*",
+    "fs": "*"
   }
 }

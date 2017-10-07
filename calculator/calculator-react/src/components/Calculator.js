@@ -11,7 +11,6 @@ class Calculator extends React.Component {
         API.performCalc(userdata)
             .then((res) => {
             console.log(res.result);
-                if (res.status === 201) {
 
                     this.setState({
                         input:'',
@@ -27,12 +26,7 @@ class Calculator extends React.Component {
                             });
                         });*/
 
-                } else if (res.status === 401) {
-                    this.setState({
-                        input:'',
-                        displayValue:userdata.result
-                    });
-                }
+
             });
 
     };
