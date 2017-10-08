@@ -1,6 +1,6 @@
 import {LOGIN} from "../actions/index";
-import SignUp from "../components/SignUp";
-
+import {ADDFILE} from "../actions/index";
+import {DELETE_FILE} from "../actions/index";
 
 // https://github.com/reactjs/react-redux/blob/d5bf492ee35ad1be8ffd5fa6be689cd74df3b41e/src/components/createConnect.js#L91
 const initialState = {
@@ -13,22 +13,11 @@ const initialState = {
     interests:'',
     lastLoginTime:'',
 
-    files :[{
-        fileName: '',
-        filePath:'',
-        fileParent: '',
-        isFile: ''
-    }],
+    files :[],
 
-    groups: [{
-        groupName: ''
-    }],
+    groups: [],
 
-    userLog:[{
-        action:'',
-        fileName : '',
-        activityTime:''
-    }]
+    userLog:[]
 
 
 };
@@ -40,25 +29,39 @@ const userdata = (state = initialState, action) => {
 
         case LOGIN :
             return {
-                    ...state,
-                    email: action.payload.email,
-                    password: action.payload.password
+                firstName: action.payload.firstname,
+                lastName: action.payload.lastname,
+                email: action.payload.email,
+                password: action.payload.password,
+                contactNo: action.payload.contact,
+                interests:action.payload.interests,
+                lastLoginTime:action.payload.lastlogin,
+
+                files :action.payload.files,
+
+                groups: action.payload.groups,
+
+                userLog:action.payload.userlog
+
             };
 
-        /*case SIGNUP :
+        case ADDFILE :
             return {
                 ...state,
-                user:{
-                    ...state.user,
-                    firstName: '',
-                    lastName: '',
-                    username: action.payload.username,
-                    password: action.payload.password,
-                    email: '',
-                    contactNo: ''
-                }
-            };
-*/
+                files:[
+                    ...state.files,
+                    action.payload
+                ]
+            }
+
+        case DELETE_FILE :
+            return {
+                ...state,
+                files:[
+                    ...state.files.slice(0, action.payload),
+                    ...state.files.slice(action.payload + 1)
+                ]
+            }
 
         default :
             return state;

@@ -35,7 +35,7 @@ function fetchData(callback,sqlQuery){
     });
 }
 
-function insertData(callback, sqlQuery){
+function executeQuery(callback, sqlQuery){
 
     console.log("\nSQL Query::"+sqlQuery);
 
@@ -50,7 +50,9 @@ function insertData(callback, sqlQuery){
     });
 }
 
+
 exports.fetchData=fetchData;
-exports.insertData=insertData;
+exports.executeQuery=executeQuery;
+
 
 

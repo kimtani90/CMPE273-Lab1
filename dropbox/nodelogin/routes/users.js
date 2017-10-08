@@ -37,9 +37,9 @@ var sha512 = function(password, salt){
 function saltHashPassword(userpassword) {
     var salt = genRandomString(16); /** Gives us salt of length 16 */
     var passwordData = sha512(userpassword, salt);
-    console.log('UserPassword = '+userpassword);
+   /* console.log('UserPassword = '+userpassword);
     console.log('Passwordhash = '+passwordData.passwordHash);
-    console.log('nSalt = '+passwordData.salt);
+    console.log('nSalt = '+passwordData.salt);*/
     return passwordData;
 }
 
@@ -54,6 +54,23 @@ router.post('/', function (req, res) {
 
     var reqPassword = saltHashPassword(req.body.password);
 
+    var userdetails={
+        firstname: '',
+        lastname: '',
+        password: '',
+        email: '',
+        contactno: '',
+        interests:'',
+        lastlogin:'',
+
+        files :[],
+
+        groups: [],
+
+        userlog:[]
+
+    }
+
     // check user already exists
     var getUser="select * from users where email='"+reqEmail+"' and password='" + reqPassword +"'";
     console.log("Query is:"+getUser);
@@ -64,10 +81,56 @@ router.post('/', function (req, res) {
         }
         else
         {
+
             if(results.length > 0){
                 req.session.email = reqEmail;
                 console.log("valid Login");
-                res.status(201).json({message: "Login successful"});
+
+                //res.send({"result":result});
+                userdetails.firstname=results[0].firstname;
+                userdetails.lastname=results[0].lastname;
+                userdetails.email=results[0].email;
+                userdetails.contacto=results[0].contact;
+                userdetails.interests=results[0].interests;
+                userdetails.lastlogin=results[0].lastlogin;
+
+
+                var insertUser="update users  set lastlogin = NOW() where email='"+reqEmail+"'";
+
+
+                mysql.executeQuery(function(err){
+                    if(err){
+                        console.log("Error inserting last login....")
+                    }
+                    else
+                    {
+                        console.log("last login inserted....")
+
+                    }
+                },insertUser);
+
+                var getFiles="select f.* from files f, userfiles u where u.email='"+reqEmail+"' and f.filepath=u.filepath";
+                console.log("Query is:"+getUser);
+
+                mysql.fetchData(function(err,fileresults){
+                    if(err){
+                        throw err;
+                    }
+                    else
+                    {
+
+                        if(results.length > 0){
+
+                            userdetails.files=fileresults;
+
+                        }
+
+                        console.log(userdetails);
+                        res.send({"userdetails":userdetails, "status":201});
+
+                    }
+
+                },getFiles);
             }
             else {
 
@@ -87,23 +150,25 @@ router.post('/signup', function (req, res) {
     var reqfirstname = req.body.firstName;
     var reqlastname = req.body.lastName;
     var reqemail = req.body.email;
-    var reqcontact = req.body.contactNo;
+    //var reqcontact = req.body.contactNo;
+   // var reqinterests = req.body.interests;
 
 
-    var insertUser="insert into users (firstname, lastname, password, email, phno) values ( '"+reqfirstname
+    var insertUser="insert into users (firstname, lastname, password, email) values ( '"+reqfirstname
         +"' ,'" + reqlastname +"','" +
-        reqPassword+ "','" + reqemail+ "','" + reqcontact+"')";
+        reqPassword+ "','" + reqemail+"')";
 
     console.log("Query is:"+insertUser);
 
-    mysql.insertData(function(err){
+    mysql.executeQuery(function(err){
         if(err){
             res.status(401).json({message: "SignUp failed"});
         }
         else
         {
             var fs = require('fs');
-            var dir = './public/uploads/'+reqemail;
+            var splitemail=reqemail.split('.')[0];
+            var dir = './public/uploads/'+splitemail;
 
             if (!fs.existsSync(dir)){
 

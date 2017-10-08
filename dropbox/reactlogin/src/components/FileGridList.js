@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import Panel from 'react-panels';
-import {withStyles} from 'material-ui/styles';
 import '../FileUpload.css';
 
 /*
@@ -20,7 +18,7 @@ const styles = theme => ({
 });
 */
 
-class ImageGridList extends Component {
+class FileGridList extends Component {
 
     static propTypes = {
         classes: PropTypes.object.isRequired,
@@ -29,7 +27,7 @@ class ImageGridList extends Component {
 
     render(){
         const classes = this.props;
-
+console.log(this.props.files);
         return (
             <div className="container-fluid">
             <div className="row">
@@ -44,7 +42,7 @@ class ImageGridList extends Component {
                 </div>
                 <div className="col-sm-1 "></div>
                 <div className="col-sm-6">
-                    <div className={classes.root}>
+
                         <table className="table table-striped">
                             <thead>
                             <tr className="col-sm-12">
@@ -55,27 +53,31 @@ class ImageGridList extends Component {
                             </tr>
                             </thead>
                             <tbody>
-                            {this.props.images.map(tile => (
+                            {this.props.files.map((file, index) => {
 
-
-                                <tr >
-                                    <td ><input type="checkbox" onChange={(event) => {
-                                        this.setState({
+                                return(
+                                <tr>
+                                    <td><input type="checkbox" onChange={(event) => {
+                                        /*this.setState({
                                             password: event.target.value
-                                        });
+                                        });*/
                                     }}/></td>
-                                    <td ><a href={'http://localhost:3001/'+tile.img} className="link-title " ref="title">
-                                        {tile.img}
+                                    <td><a href={'http://localhost:3001/' + file.filename} className="link-title "
+                                           ref="title">
+                                        {file.filename}
                                     </a></td>
 
-                                    <td >john@example.com</td>
-                                    <td x>john@ssss.com</td>
+                                    <td><button className="btn btn-primary btn-block" type="submit"
+                                                onClick={() => this.props.deleteFile(index, file)}>
+                                        Delete
+                                    </button></td>
+                                    <td>john@ssss.com</td>
                                 </tr>
-
-                            ))}
+                                );
+                            })}
                             </tbody>
                         </table>
-                    </div>
+
                 </div>
 
 
@@ -103,4 +105,4 @@ class ImageGridList extends Component {
 }
 
 
-export default ImageGridList;
+export default FileGridList;

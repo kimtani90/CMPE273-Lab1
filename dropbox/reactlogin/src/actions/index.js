@@ -1,21 +1,31 @@
 
 export const LOGIN = 'LOGIN';
+export const ADDFILE = 'ADDFILE';
+export const DELETE_FILE = 'DELETE_FILE';
 
 export function afterlogin(userdata) {
-    console.log("vvvvvvvvvvvvvvvvvvvv");
-    console.log(userdata)
+
     return {
         type : LOGIN,
         payload : userdata
     }
 };
 
-/*
 
-export function aftersignup(userdata) {
-    console.log(userdata)
+
+export function addFile(filedata) {
+
     return {
-        type : SIGNUP,
-        payload : userdata
+        type : ADDFILE,
+        payload : filedata
     }
-};*/
+};
+
+
+export function deleteFile(index) {
+
+    return {
+        type : DELETE_FILE,
+        payload : index
+    }
+};

@@ -14,7 +14,7 @@ export const doLogin = (payload) =>
         /*credentials:'include',*/
         body: JSON.stringify(payload)
     }).then(res => {
-        return res.status;
+        return res.json();
     })
         .catch(error => {
             console.log("This is error");
@@ -40,8 +40,8 @@ export const createUser = (payload) =>
 
 
 
-export const getImages = () =>
-    fetch(`${api}/files/`)
+export const getImages = (email) =>
+    fetch(`${api}/files?email=`+email)
         .then(res => res.json())
         .catch(error => {
             console.log("This is error.");
@@ -53,9 +53,23 @@ export const uploadFile = (payload) =>
         method: 'POST',
         body: payload
     }).then(res => {
-        return res.status;
+        return res.json();
     }).catch(error => {
         console.log("This is error");
         return error;
     });
 
+export const deleteFile = (file) =>
+    fetch(`${api}/files/delete`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(file)
+    }).then(res => {
+        return res.json();
+    }).catch(error => {
+        console.log("This is error");
+        return error;
+    });

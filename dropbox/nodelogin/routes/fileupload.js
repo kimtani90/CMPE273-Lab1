@@ -24,11 +24,11 @@ var upload = multer({storage:storage});
 
 
 
-router.get('/', function (req, res) {
+router.get('/',  function (req, res) {
 
     var resArr = [];
 
-    glob("public/uploads/*", function (er, files) {
+    glob("public/uploads/"+req.params.email, function (er, files) {
         console.log(files);
         var resArr = files.map(function (file) {
             console.log(file);
@@ -38,40 +38,103 @@ router.get('/', function (req, res) {
             return imgJSON;
         });
 
-        console.log(resArr);
+
         res.status(200).send(resArr);
     });
 
 });
 
-router.post('/upload', upload.single('mypic'), function (req, res) {
+router.post('/delete', function (req, res) {
 
     console.log(req.body);
-    var fileName = req.file.filename;
-    var fileLocation = req.file.path;
+    console.log(req.file);
+    var filepath= req.body.filepath;
+
+    var deleteUserFile="delete from userfiles where filepath = '"+filepath+"'";
+    console.log("Query deleteFile is:"+deleteUserFile);
+
+    mysql.executeQuery(function(err){
+        if(err){
+            res.send({"status":401});
+        }
+        else
+        {
+            var deleteFile="delete from files where filepath = '"+filepath+"'";
+            console.log("Query deleteFile is:"+deleteFile);
 
 
+            mysql.executeQuery(function(err){
+                if(err){
+                    console.log("Error: data not deleted from userfiles")
+                }
+                else
+                {
+                    console.log("data deleted from userfiles")
 
-    fs.createReadStream('./public/uploads/'+req.file.filename).pipe(fs.createWriteStream('./public/uploads/'+req.body.email+'/'+req.file.filename));
+                }
+            },deleteFile);
+
+
+            fs.unlinkSync(filepath);
+
+            res.send({"status":204});
+        }
+    },deleteUserFile);
+});
+
+router.post('/upload', upload.single('mypic'), function (req, res) {
+
+    var splitedemail = req.body.email.split('.')[0];
+    console.log(req.body);
+    var filename = req.file.filename;
+    var filepath = './public/uploads/'+splitedemail+'/'+req.file.filename;
+    var fileparent = req.body.fileparent;
+    var isfile = req.body.isfile;
+
+
+    var filedata={
+        'filename': filename,
+        'filepath':filepath,
+        'fileparent': fileparent,
+        'isfile': isfile
+    };
+
+    //copying a file to user's folder
+    fs.createReadStream('./public/uploads/'+req.file.filename).pipe(fs.createWriteStream(filepath));
 
     // check user already exists
-    var insertFile="insert into Files (filename, filelocation) values ( '"+fileName
-        +"' ,'" + fileLocation+"')";
+    var insertFile="insert into files (filename, filepath, fileparent, isfile) values ( '"+filename
+        +"' ,'" + filepath+"' ,'" + fileparent+"','" + isfile+"')";
 
     console.log("Query is:"+insertFile);
 
 
-    mysql.insertData(function(err){
+    mysql.executeQuery(function(err){
         if(err){
-            res.status(401).json({message: "File Error!"});
+            res.send({"status":401});
         }
         else
         {
+            var insertUserFile="insert into userfiles  (filepath, email)  values ( '"+filepath+"' ,'" + req.body.email+"')";
+            console.log("Query insertUserFile is:"+insertUserFile);
 
-            res.status(204).json({message: "File Uploaded Successfully!"});
 
+            mysql.executeQuery(function(err){
+                if(err){
+                   console.log("Error: data not inserted in userfiles")
+                }
+                else
+                {
+                    console.log("data inserted in userfiles")
+
+                }
+            },insertUserFile);
+
+            res.send({"filedata":filedata, "status":204});
         }
     },insertFile);
+
+
 
 });
 

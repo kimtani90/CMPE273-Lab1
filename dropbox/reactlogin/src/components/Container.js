@@ -19,13 +19,16 @@ class Container extends Component {
     login = (userdata) =>{
 
         API.doLogin(userdata)
-            .then((status)  => {
-                if (status === 201) {
+            .then((res)  => {
 
-                    this.props.afterlogin(userdata);
+                console.log(res.userdetails);
+
+                if (res.status == 201) {
+
+                    this.props.afterlogin(res.userdetails);
                     this.props.history.push("/files");
 
-                } else if (status === 401) {
+                } else if (res.status == 401) {
                     this.setState({
 
                         message: "Wrong username or password. Try again..!!"
@@ -48,7 +51,7 @@ class Container extends Component {
         API.createUser(userdata)
             .then((status)  => {
                 if (status === 201) {
-                    console.log("Saveddd");
+
                     this.setState({
 
                         message: "User details saved successfully!"
