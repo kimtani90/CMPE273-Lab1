@@ -40,7 +40,7 @@ export const createUser = (payload) =>
 
 
 
-export const getImages = (email) =>
+export const getFile = (email) =>
     fetch(`${api}/files?email=`+email)
         .then(res => res.json())
         .catch(error => {
@@ -67,6 +67,36 @@ export const deleteFile = (file) =>
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(file)
+    }).then(res => {
+        return res.json();
+    }).catch(error => {
+        console.log("This is error");
+        return error;
+    });
+
+export const makeFolder = (folder) =>
+    fetch(`${api}/files/makefolder`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(folder)
+    }).then(res => {
+        return res.json();
+    }).catch(error => {
+        console.log("This is error");
+        return error;
+    });
+
+export const shareFile = (filedata) =>
+    fetch(`${api}/files/sharefile`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(filedata)
     }).then(res => {
         return res.json();
     }).catch(error => {
