@@ -45,14 +45,8 @@ function saltHashPassword(userpassword) {
 
 /* GET users listing. */
 router.get('/', function (req, res) {
-    res.send('respond with a resource');
-});
-
-router.post('/', function (req, res) {
-
-    var reqEmail = req.body.email;
-
-    var reqPassword = saltHashPassword(req.body.password);
+    console.log(req.query);
+    var email=req.query.email;
 
     var userdetails={
         firstname: '',
@@ -72,7 +66,7 @@ router.post('/', function (req, res) {
     }
 
     // check user already exists
-    var getUser="select * from users where email='"+reqEmail+"' and password='" + reqPassword +"'";
+    var getUser="select * from users where email='"+email+"'";
     console.log("Query is:"+getUser);
 
     mysql.fetchData(function(err,results){
@@ -83,7 +77,7 @@ router.post('/', function (req, res) {
         {
 
             if(results.length > 0){
-                req.session.email = reqEmail;
+
                 console.log("valid Login");
 
                 //res.send({"result":result});
@@ -94,22 +88,7 @@ router.post('/', function (req, res) {
                 userdetails.interests=results[0].interests;
                 userdetails.lastlogin=results[0].lastlogin;
 
-
-                var insertUser="update users  set lastlogin = NOW() where email='"+reqEmail+"'";
-
-
-                mysql.executeQuery(function(err){
-                    if(err){
-                        console.log("Error inserting last login....")
-                    }
-                    else
-                    {
-                        console.log("last login inserted....")
-
-                    }
-                },insertUser);
-
-                var getFiles="select f.* from files f, userfiles u where u.email='"+reqEmail+"' and f.filepath=u.filepath";
+                var getFiles="select f.* from files f, userfiles u where u.email='"+email+"' and f.filepath=u.filepath";
                 console.log("Query is:"+getUser);
 
                 mysql.fetchData(function(err,fileresults){
@@ -131,11 +110,61 @@ router.post('/', function (req, res) {
                     }
 
                 },getFiles);
+
+
             }
             else {
 
                 console.log("Invalid Login");
                 res.status(401).json({message: "Login failed"});
+            }
+        }
+    },getUser);
+
+});
+
+router.post('/', function (req, res) {
+
+    var reqEmail = req.body.email;
+
+    var reqPassword = saltHashPassword(req.body.password);
+
+    // check user already exists
+    var getUser="select * from users where email='"+reqEmail+"' and password='" + reqPassword +"'";
+    console.log("Query is:"+getUser);
+
+    mysql.fetchData(function(err,results){
+        if(err){
+            throw err;
+
+            res.status(401).send();
+        }
+        else
+        {
+
+            if(results.length > 0){
+                req.session.email = reqEmail;
+                console.log("valid Login");
+
+                var insertUser="update users  set lastlogin = NOW() where email='"+reqEmail+"'";
+
+
+                mysql.executeQuery(function(err){
+                    if(err){
+                        console.log("Error inserting last login....")
+                    }
+                    else
+                    {
+                        console.log("last login inserted....")
+                        res.status(201).send();
+
+                    }
+                },insertUser);
+            }
+            else {
+
+                console.log("Invalid Login");
+                res.status(401).send();
             }
         }
     },getUser);

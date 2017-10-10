@@ -30,6 +30,19 @@ CREATE TABLE users (
     PRIMARY KEY (email)
 );
 
+CREATE TABLE userlog (
+
+    ID int NOT NULL AUTO_INCREMENT,
+    filename varchar(255),
+    filepath varchar(500),
+    isfile varchar(1),
+    email varchar(500),
+    action varchar(100),
+    actiontime varchar(100),
+    PRIMARY KEY (ID),
+FOREIGN KEY (email) REFERENCES users(email)
+
+);
 
 insert into files (filename, filepath, isfile) values ('test.doc', '/uploads/kimtani90@gmail.com/test.doc', 'T' );
 insert into users values ('Dishant', 'Kimtani', 'abc11@gmail.com', 'abcd', '8888888888', 'cricket', NOW());

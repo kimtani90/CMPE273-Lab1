@@ -8,6 +8,10 @@ import {addFile} from "../actions/index";
 import {deleteFile} from "../actions/index";
 import RightNavBar from "./RightNavBar";
 import LeftNavBar from "./LeftNavBar";
+import UserDetails from "./UserDetails";
+import {afterlogin} from "../actions/index";
+
+
 
 
 class FileUpload extends Component {
@@ -16,6 +20,25 @@ class FileUpload extends Component {
         message: '',
         fileparent:''
     };
+
+    componentWillMount(){
+        const data='kimtani89@gmail.com'
+        API.getState(data)
+            .then((res) => {
+                console.log(res)
+                if (res.status == 201) {
+                    this.props.afterlogin(res.userdetails);
+                    console.log("Success...")
+
+                }else if (res.status == 401) {
+                    this.setState({
+
+                        message: "Folder error"
+                    });
+                }
+            });
+    }
+
     handleFileUpload = (event) => {
 
 
@@ -46,8 +69,8 @@ class FileUpload extends Component {
     };
 
     deleteFile=(index, file) => {
-
-        API.deleteFile(file)
+        const fileData={file:file, email:this.props.userdata.email}
+        API.deleteFile(fileData)
             .then((res) => {
 
                 if (res.status == 204) {
@@ -101,12 +124,8 @@ class FileUpload extends Component {
 
                 if (res.status == 201) {
                     console.log("Success...")
-/*
 
-                    this.props.addFile(res.folderdata);
-*/
-
-                }else if (res.status == .401) {
+                }else if (res.status == 401) {
                     this.setState({
 
                         message: "Folder error"
@@ -117,9 +136,7 @@ class FileUpload extends Component {
     }
 
     openFileFolder=(filedata) =>{
-        const fileArr=this.props.userdata.files;
-        const newFileArr=[];
-        console.log(fileArr);
+
         if(filedata.isfile=='F'){
 
             this.setState({
@@ -131,9 +148,23 @@ class FileUpload extends Component {
 
         else{
 
-            this.setState({
-                fileparent:filedata.filepath
-            });
+
+            API.getFile(filedata)
+                .then((res) => {
+                    console.log("hello");
+                console.log(res);
+
+/*console.log(res.status);
+                    if (res.status == 201) {
+                        console.log("Success...")
+
+                    }else if (res.status == 401) {
+                        this.setState({
+
+                            message: "Folder error"
+                        });
+                    }*/
+                });
         }
         console.log(this.state.fileparent);
 
@@ -144,13 +175,13 @@ class FileUpload extends Component {
 
         console.log(this.state.fileparent);
         return (
+
             <div className="container-fluid">
 
             <div className="jumbotron">
 
 
-
-<div className="row justify-content-md-center">
+                <div className="row justify-content-md-center">
 
                {/* <Typography
                     align={'center'}
@@ -165,13 +196,13 @@ class FileUpload extends Component {
                     name="mypic"
                     onChange={this.handleFileUpload}
                 />
-</div>
-<br/><br/>
+                </div>
+                <br/><br/>
 
                 <div className="container-fluid">
                     <div className="row">
 
-                        <div className="col-sm-8 ">
+                        <div className="col-sm-7 ">
                             <a href="#" className="link-title "
                                onClick={() => this.setState({
                                    fileparent:''
@@ -180,8 +211,9 @@ class FileUpload extends Component {
                             </a>
                         </div>
                     </div>
+
                     <div className="row">
-                        <LeftNavBar/>
+                        <LeftNavBar userdetails={this.userdetails}/>
                         <div className="col-sm-1 "></div>
                         <FileGridList files={this.props.userdata.files}
                                       deleteFile={this.deleteFile}
@@ -196,7 +228,9 @@ class FileUpload extends Component {
 
             </div>
 
+
 </div>
+
 
         );
     }
@@ -212,7 +246,8 @@ function mapStateToProps(userdata) {
 function mapDispatchToProps(dispatch) {
     return {
         addFile : (data) => dispatch(addFile(data)),
-        deleteFile : (index) => dispatch(deleteFile(index))
+        deleteFile : (index) => dispatch(deleteFile(index)),
+        afterlogin : (data) => dispatch(afterlogin(data))
     };
 }
 

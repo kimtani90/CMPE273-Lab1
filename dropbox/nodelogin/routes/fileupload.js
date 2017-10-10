@@ -26,9 +26,13 @@ var upload = multer({storage:storage});
 
 router.get('/',  function (req, res) {
 
-    var resArr = [];
 
-    glob("public/uploads/"+req.params.email, function (er, files) {
+    console.log(req.query.filedata);
+    var filedata=req.query.filedata;
+
+    /*var resArr = [];
+
+    glob(filedata.filepath, function (er, files) {
         console.log(files);
         var resArr = files.map(function (file) {
             console.log(file);
@@ -37,18 +41,22 @@ router.get('/',  function (req, res) {
             imgJSON.cols = 2  ;
             return imgJSON;
         });
+*/
+    console.log(filedata);
+    res.download(filedata.filepath, filedata.filename);
+   // res.sendFile("/home/kimtani90/SJSU_Sem2/CMPE 273/React/CMPE273-Lab1/dropbox/nodelogin/public/uploads/kimtani89@gmail/Insurance.docx")
 
 
-        res.status(200).send(resArr);
-    });
 
 });
 
 router.post('/delete', function (req, res) {
 
     console.log(req.body);
-    var isfile = req.body.isfile;
-    var filepath= req.body.filepath;
+    var filename = req.body.file.filename;
+    var isfile = req.body.file.isfile;
+    var filepath= req.body.file.filepath;
+    var email=req.body.email;
 
     var deleteUserFile="delete from userfiles where filepath = '"+filepath+"'";
     console.log("Query deleteFile is:"+deleteUserFile);
@@ -73,6 +81,23 @@ router.post('/delete', function (req, res) {
 
                 }
             },deleteFile);
+
+
+            var userlog="insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '"+filename
+                +"' ,'" + filepath +"','"+ isfile +"','" + email +"','" +
+                "File Delete"+ "',NOW())";
+
+
+            mysql.executeQuery(function(err){
+                if(err){
+                    console.log(err)
+                }
+                else
+                {
+                    console.log("userlog inserted....")
+
+                }
+            },userlog);
 
             if(isfile=='F')
                 fs.rmdirSync(filepath);
@@ -132,6 +157,23 @@ router.post('/upload', upload.single('mypic'), function (req, res) {
 
                 }
             },insertUserFile);
+
+
+            var userlog="insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '"+filename
+                +"' ,'" + filepath +"','"+ isfile +"','" + req.body.email +"','" +
+                "File Upload"+ "',NOW())";
+
+
+            mysql.executeQuery(function(err){
+                if(err){
+                    console.log("Error inserting userlog....")
+                }
+                else
+                {
+                    console.log("userlog inserted....")
+
+                }
+            },userlog);
             console.log(filedata)
 
             res.send({"filedata":filedata, "status":204});
@@ -199,6 +241,22 @@ router.post('/makefolder', function (req, res) {
                 }
             },insertUserFile);
 
+            var userlog="insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '"+filename
+                +"' ,'" + filepath +"','"+ isfile +"','" + req.body.email +"','" +
+                "Make Folder "+ "',NOW())";
+
+
+            mysql.executeQuery(function(err){
+                if(err){
+                    console.log("Error inserting userlog....")
+                }
+                else
+                {
+                    console.log("userlog inserted....")
+
+                }
+            },userlog);
+
             res.send({"folderdata":folderdata, "status":204});
         }
     },insertFile);
@@ -261,6 +319,22 @@ router.post('/sharefile', function (req, res) {
 
                 }
             },insertUserFile);
+
+            var userlog="insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '"+filename
+                +"' ,'" + filepath +"','"+ isfile +"','" + userEmail +"','" +
+                "File Shared with "+shareEmail+ "',NOW())";
+
+
+            mysql.executeQuery(function(err){
+                if(err){
+                    console.log("Error inserting userlog....")
+                }
+                else
+                {
+                    console.log("userlog inserted....")
+
+                }
+            },userlog);
 
             res.send({"status":201});
         }

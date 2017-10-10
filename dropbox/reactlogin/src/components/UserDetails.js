@@ -1,22 +1,35 @@
 import React, {Component} from 'react';
+import * as API from '../api/API';
 import '../Login.css';
 import PropTypes from 'prop-types';
 import dropbox from "./dropboxplus.gif";
+import {connect} from 'react-redux';
+import {Row,Col,ListGroupItem} from 'react-bootstrap';
+import {afterlogin} from "../actions/index";
 
 
-class Login extends Component {
-    /*
-        static propTypes = {
-            handleSubmit: PropTypes.func.isRequired
-        };*/
+class UserDetails extends Component {
 
-    state = {
-        username: '',
-        password: ''
-    };
+    componentWillMount(){
+        const data='kimtani89@gmail.com'
+        API.getState(data)
+            .then((res) => {
+                console.log(res)
+                if (res.status == 201) {
+                    this.props.afterlogin(res.userdetails);
+                    console.log("Success...")
 
+                }else if (res.status == 401) {
+                    this.setState({
+
+                        message: "Folder error"
+                    });
+                }
+            });
+    }
 
     render() {
+        console.log()
         return (
             <div className="jumbotron">
             <div className="container-fluid row justify-content-md-center">
@@ -24,34 +37,37 @@ class Login extends Component {
                 <div className="account-wall col-md-7">
                     <div className="col-md-12">
 
-                    <img className="profile-img" src={dropbox}
-                     alt=""/>
+                        <h2>User Details</h2>
 
-
-
-                        <table className="table table-user-information justify-content-md-left">
-                            <tbody>
+                        <table className="table table-user-information ">
+                            <tbody >
                             <tr>
-                                <td>Department:</td>
-                                <td>Programming</td>
+                                <td>First Name:</td>
+                                <td>{this.props.userdata.firstName}</td>
                             </tr>
 
 
                                 <tr>
-                                    <td>Gender</td>
-                                    <td>Female</td>
+                                    <td>Last Name:</td>
+                                    <td>{this.props.userdata.lastName}</td>
                                 </tr>
                                 <tr>
-                                    <td>Home Address</td>
-                                    <td>Kathmandu,Nepal</td>
+                                    <td>Email:</td>
+                                    <td>{this.props.userdata.email}</td>
                                 </tr>
                                 <tr>
-                                    <td>Email</td>
-                                    <td><a href="mailto:info@support.com">info@support.com</a></td>
+                                    <td>Contact Number:</td>
+                                    <td>{this.props.userdata.contactNo}</td>
                                 </tr>
                             <tr>
-                                <td>Phone Number</td>
-                                <td>123-4567-890(Landline)<br/><br/>555-4567-890(Mobile)
+                                <td>Interests:</td>
+
+                                <td><textarea type="text" className="form-control" placeholder="" required
+                                        value={this.props.userdata.interests}      onChange={(event) => {
+                                                  this.setState({
+                                                      password: event.target.value
+                                                  });
+                                              }}/>
                                 </td>
 
                             </tr>
@@ -98,10 +114,14 @@ class Login extends Component {
                        }}/>
 
                 <br/>
-                <button className="btn btn-primary btn-block" type="submit"
+                <button className="btn btn-primary" type="submit"
                         onClick={() => this.props.login(this.state)}>
-                    Sign in
+                    Save
                 </button>
+                        <button className="btn btn-primary" type="submit"
+                                onClick={() => this.props}>
+                            Back
+                        </button>
                     </div>
                 </div>
 
@@ -111,4 +131,17 @@ class Login extends Component {
     }
 }
 
-export default Login;
+
+function mapStateToProps(userdata) {
+console.log(userdata);
+    return {userdata};
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+       // updateUser : (data) => dispatch(updateUser(data)),
+        afterlogin : (data) => dispatch(afterlogin(data))
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserDetails);

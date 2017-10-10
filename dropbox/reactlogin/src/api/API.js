@@ -14,7 +14,7 @@ export const doLogin = (payload) =>
         /*credentials:'include',*/
         body: JSON.stringify(payload)
     }).then(res => {
-        return res.json();
+        return res.status;
     })
         .catch(error => {
             console.log("This is error");
@@ -40,8 +40,17 @@ export const createUser = (payload) =>
 
 
 
-export const getFile = (email) =>
-    fetch(`${api}/files?email=`+email)
+export const getFile = (filedata) =>
+    fetch(`${api}/files?filedata=`+JSON.stringify(filedata))
+        .then(res => res.status)
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
+
+
+export const getState = (email) =>
+    fetch(`${api}/users?email=`+email)
         .then(res => res.json())
         .catch(error => {
             console.log("This is error.");

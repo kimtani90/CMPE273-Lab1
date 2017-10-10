@@ -14,7 +14,9 @@
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "react-modal": "3.0.0",
-    "react-bootstrap": "^0.31.3"
+    "react-bootstrap": "^0.31.3",
+    "react-bootstrap-typeahead": "^2.0.0-alpha.3",
+    "react-typeahead": "^2.0.0-alpha.6"
   },
   "scripts": {
     "start": "react-scripts start",

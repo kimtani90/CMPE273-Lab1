@@ -2,12 +2,15 @@ import React, {Component} from 'react';
 import {Row,Col,ListGroupItem} from 'react-bootstrap';
 import Modal from 'react-modal';
 import '../FileUpload.css';
+//import {TokenAutocomplete} from 'react-token-autocomplete';
+//import { Tokenizer } from 'react-typeahead'
+
 
 class FileGridList extends Component {
 
 
 
-    state = { isModalOpen: false, shareEmail:'', file:'' }
+    state = { isModalOpen: false, shareEmail:'', file:'' , group:[]}
     openModal(file) {
         this.setState({ isModalOpen: true , file: file})
     }
@@ -48,7 +51,9 @@ class FileGridList extends Component {
 
                     </tr>
                     </thead>
+
                     <tbody>
+
                     {this.props.files.map((file, index) => {
 
                         if(file.fileparent==this.props.parentFile) {
@@ -56,10 +61,13 @@ class FileGridList extends Component {
                             return (
                                 <tr className="justify-content-md-left">
 
-                                    <td><a href="#" className="link-title "
+                                    <td>
+
+                                        <a href="#" className="link-title "
                                            onClick={() => this.props.openFileFolder(file)}>
                                         {file.filename}
-                                    </a></td>
+                                    </a>
+                                            </td>
 
                                     <td>
                                         <button className="btn btn-primary" type="submit"
@@ -81,8 +89,21 @@ class FileGridList extends Component {
                 </table>
                 <Modal isOpen={this.state.isModalOpen} style={this.style} onClose={() => this.closeModal()}>
                     <ListGroupItem>
+
                         <Row className="show-grid">
                             <Col md={4}>Share with Email:</Col>
+
+                            {/*<Tokenizer
+
+                                onTokenAdd={function(token) {
+                                    this.setState({
+                                       group:{ ...this.state.group,
+                                                token
+                                       }
+                                    })
+                                    console.log('token added: ', token);
+                                }}
+                            />*/}
                             <Col md={8}>
                                 <input type="text" className="form-control" required="true" autoFocus
                                        onChange={(event) => {

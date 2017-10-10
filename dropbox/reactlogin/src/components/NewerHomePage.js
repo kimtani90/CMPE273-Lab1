@@ -6,6 +6,7 @@ import SignUp from "./SignUp";
 import FileUpload from "./FileUpload";
 import Login from "./Login";
 import Container from "./Container";
+import UserDetails from "./UserDetails";
 import dropbox from "./dropbox-img.png";
 import dropboxtitle from "./Dropbox_Log.png";
 
@@ -39,6 +40,12 @@ class NewerHomePage extends Component {
                 <Route exact path="/files" render={() => (
                 //  <FileUpload username={this.state.username}/>
                     <FileUpload/>
+                )}/>
+
+                <Route exact path="/userdetails" render={() => (
+                    //  <FileUpload username={this.state.username}/>
+
+                    <UserDetails/>
                 )}/>
             </div>
 

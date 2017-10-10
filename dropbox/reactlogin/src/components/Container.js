@@ -3,9 +3,7 @@ import { Route, withRouter } from 'react-router-dom';
 import * as API from '../api/API';
 import '../Login.css';
 import SignUp from "./SignUp";
-import FileUpload from "./FileUpload";
 import Login from "./Login";
-import {connect} from 'react-redux';
 import {afterlogin} from "../actions/index";
 
 
@@ -19,16 +17,16 @@ class Container extends Component {
     login = (userdata) =>{
 
         API.doLogin(userdata)
-            .then((res)  => {
+            .then((status)  => {
 
-                console.log(res.userdetails);
+                console.log(status);
 
-                if (res.status == 201) {
+                if (status == 201) {
 
-                    this.props.afterlogin(res.userdetails);
+
                     this.props.history.push("/files");
 
-                } else if (res.status == 401) {
+                } else if (status == 401) {
                     this.setState({
 
                         message: "Wrong username or password. Try again..!!"
@@ -90,9 +88,6 @@ class Container extends Component {
                 </div>
             </div>
 
-
-
-
     );
 
 
@@ -100,11 +95,4 @@ class Container extends Component {
 }
 
 
-function mapDispatchToProps(dispatch) {
-    return {
-        afterlogin : (data) => dispatch(afterlogin(data))
-    };
-
-}
-
-export default withRouter(connect(null, mapDispatchToProps)(Container));
+export default withRouter(Container);
