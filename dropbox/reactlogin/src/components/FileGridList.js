@@ -2,8 +2,10 @@ import React, {Component} from 'react';
 import {Row,Col,ListGroupItem} from 'react-bootstrap';
 import Modal from 'react-modal';
 import '../FileUpload.css';
-//import {TokenAutocomplete} from 'react-token-autocomplete';
-//import { Tokenizer } from 'react-typeahead'
+
+// Import React Table
+import ReactTable from "react-table";
+import "react-table/react-table.css";
 
 
 class FileGridList extends Component {
@@ -42,8 +44,8 @@ class FileGridList extends Component {
     return (
 
         <div className="col-sm-6">
-            <div className="table-responsive">
-            <table className="table table-striped">
+
+            <table className="table table-striped table-borderless table-condensed table-hover table-bordered">
                     <thead>
                     <tr className="justify-content-md-left">
 
@@ -133,7 +135,7 @@ class FileGridList extends Component {
 
                 </Modal>
 
-            </div>
+
         </div>
 
 

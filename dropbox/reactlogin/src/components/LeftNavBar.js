@@ -10,11 +10,11 @@ class LeftNavBar extends Component {
         return(
             <div className="col-sm-2 sidenav">
 
-                <button className="btn btn-primary" type="submit"
+                <button className="btn btn-primary btn-block" type="submit"
                         onClick={() => this.props.history.push("/userdetails")}>User Profile</button>
                 <hr/>
                 <button className="btn btn-primary btn-block" type="submit"
-                >
+                        onClick={() => this.props.history.push("/userlog")}>
                     User Activity
                 </button>
                 <br/>

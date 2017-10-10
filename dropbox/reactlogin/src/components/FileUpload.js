@@ -43,7 +43,7 @@ class FileUpload extends Component {
 
 
         const payload = new FormData();
-
+console.log(this.state);
         payload.append('mypic', event.target.files[0]);
         payload.append('email', this.props.userdata.email);
         payload.append('fileparent', this.state.fileparent);
@@ -136,7 +136,8 @@ class FileUpload extends Component {
     }
 
     openFileFolder=(filedata) =>{
-
+        console.log("nnnnnn")
+        console.log(filedata)
         if(filedata.isfile=='F'){
 
             this.setState({

@@ -119,13 +119,15 @@ router.post('/upload', upload.single('mypic'), function (req, res) {
     var fileparent = req.body.fileparent;
     var isfile = req.body.isfile;
 
-
+    if(fileparent)
+        filepath=fileparent+'/'+filename
     var filedata={
         'filename': filename,
         'filepath':filepath,
         'fileparent': fileparent,
         'isfile': isfile
     };
+
 
     //copying a file to user's folder
     fs.createReadStream('./public/uploads/'+req.file.filename).pipe(fs.createWriteStream(filepath));

@@ -29,7 +29,7 @@ class UserDetails extends Component {
     }
 
     render() {
-        console.log()
+
         return (
             <div className="jumbotron">
             <div className="container-fluid row justify-content-md-center">

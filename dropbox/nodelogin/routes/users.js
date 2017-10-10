@@ -104,12 +104,35 @@ router.get('/', function (req, res) {
 
                         }
 
-                        console.log(userdetails);
-                        res.send({"userdetails":userdetails, "status":201});
+                        var getUserLog="select * from userlog where email='"+email+"'";
+                        console.log("Query is:"+getUserLog);
+
+                        mysql.fetchData(function(err,userlogresults){
+                            if(err){
+                                throw err;
+                            }
+                            else
+                            {
+
+                                if(results.length > 0){
+
+                                    userdetails.userlog=userlogresults;
+
+                                }
+
+                                console.log(userdetails);
+                                res.send({"userdetails":userdetails, "status":201});
+
+                            }
+
+                        },getUserLog);
 
                     }
 
                 },getFiles);
+
+
+
 
 
             }
