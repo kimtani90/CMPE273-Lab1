@@ -8,9 +8,8 @@ import {addFile} from "../actions/index";
 import {deleteFile} from "../actions/index";
 import RightNavBar from "./RightNavBar";
 import LeftNavBar from "./LeftNavBar";
-import UserDetails from "./UserDetails";
 import {afterlogin} from "../actions/index";
-
+import Header from "./Header";
 
 
 
@@ -22,10 +21,10 @@ class FileUpload extends Component {
     };
 
     componentWillMount(){
-        const data='kimtani89@gmail.com'
+        const data=localStorage.getItem("email")
         API.getState(data)
             .then((res) => {
-                console.log(res)
+
                 if (res.status == 201) {
                     this.props.afterlogin(res.userdetails);
                     console.log("Success...")
@@ -40,7 +39,6 @@ class FileUpload extends Component {
     }
 
     handleFileUpload = (event) => {
-
 
         const payload = new FormData();
 console.log(this.state);
@@ -69,12 +67,14 @@ console.log(this.state);
     };
 
     deleteFile=(index, file) => {
+
         const fileData={file:file, email:this.props.userdata.email}
         API.deleteFile(fileData)
             .then((res) => {
 
                 if (res.status == 204) {
 
+                    console.log("Delete success")
                     this.props.deleteFile(index);
                     this.setState({
 
@@ -83,7 +83,7 @@ console.log(this.state);
                 }else if (res.status == 401) {
                     this.setState({
 
-                        message: "File error"
+                        message: res.message
                     });
                 }
             });
@@ -116,22 +116,33 @@ console.log(this.state);
 
     sharefile=(filedata) => {
 
-        const data={filedata:filedata, email:this.props.userdata.email}
-        console.log(data);
 
-        API.shareFile(data)
-            .then((res) => {
+        var emailList=filedata.shareEmail.trim().split(';');
 
-                if (res.status == 201) {
-                    console.log("Success...")
+        console.log(emailList)
 
-                }else if (res.status == 401) {
-                    this.setState({
+        for (var key in emailList) {
 
-                        message: "Folder error"
-                    });
-                }
-            });
+            const data = {filedata: filedata.file, shareEmail: emailList[key], email: this.props.userdata.email}
+
+            API.shareFile(data)
+                .then((res) => {
+
+                    if (res.status == 201) {
+                        this.setState({
+
+                            message: "File Shared with "+data.shareEmail
+                        });
+                        console.log("Success...")
+
+                    } else if (res.status == 401) {
+                        this.setState({
+
+                            message: res.message
+                        });
+                    }
+                });
+        }
 
     }
 
@@ -177,10 +188,18 @@ console.log(this.state);
         console.log(this.state.fileparent);
         return (
 
+
+
             <div className="container-fluid">
+                <Header/>
+
+                { this.state.message===''?'':(
+                    <div className="text-danger">
+                        {this.state.message}
+                    </div>)
+                }
 
             <div className="jumbotron">
-
 
                 <div className="row justify-content-md-center">
 
@@ -206,7 +225,8 @@ console.log(this.state);
                         <div className="col-sm-7 ">
                             <a href="#" className="link-title "
                                onClick={() => this.setState({
-                                   fileparent:''
+                                   fileparent:'',
+                                   message:''
                                })}>
                                 Dropbox
                             </a>
@@ -220,10 +240,11 @@ console.log(this.state);
                                       deleteFile={this.deleteFile}
                                       sharefile={this.sharefile}
                                       openFileFolder={this.openFileFolder}
-                                      parentFile={this.state.fileparent}/>
+                                      parentFile={this.state.fileparent}
+                                      userEmail={this.props.userdata.email}/>
                         <div className="col-sm-1 "></div>
-                        <RightNavBar makeFolder={this.makeFolder}
-                                     parentFile={this.state.fileparent}/>
+                        {/*<RightNavBar makeFolder={this.makeFolder}
+                                     parentFile={this.state.fileparent}/>*/}
                     </div>
                 </div>
 

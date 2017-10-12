@@ -6,12 +6,13 @@ import dropbox from "./dropboxplus.gif";
 import {connect} from 'react-redux';
 import {Row,Col,ListGroupItem} from 'react-bootstrap';
 import {afterlogin} from "../actions/index";
-
+import { Route, withRouter } from 'react-router-dom';
+import Header from "./Header";
 
 class UserDetails extends Component {
 
     componentWillMount(){
-        const data='kimtani89@gmail.com'
+        const data=localStorage.getItem("email")
         API.getState(data)
             .then((res) => {
                 console.log(res)
@@ -31,7 +32,10 @@ class UserDetails extends Component {
     render() {
 
         return (
+            <div>
+                <Header/>
             <div className="jumbotron">
+
             <div className="container-fluid row justify-content-md-center">
 
                 <div className="account-wall col-md-7">
@@ -75,55 +79,30 @@ class UserDetails extends Component {
                             </tbody>
                         </table>
 
+                        <br/>
 
-                        <div className=" row justify-content-md-center">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        <div class="col-md-5 " >First Name</div>
-                <input type="text" className="form-control col-md-5" placeholder="Email" required autoFocus
-                       onChange={(event) => {
-                           this.setState({
-                               username: event.target.value
-                           });
-                       }}/>
+                        <div className="row justify-content-md-center">
+                            <div className="col-md-5">
+                                <button className="btn btn-primary" type="submit"
+                                        onClick={() => this.props.login(this.state)}>
+                                    Save
+                                </button>
+                            </div>
+                            <div className="col-md-5">
+                                <button className="btn btn-primary" type="submit"
+                                        onClick={() => this.props.history.push("/files")}>
+                                    Back
+                                </button>
+                            </div>
                         </div>
-                <br/>
-                <textarea type="text" className="form-control" placeholder="Password" required
-                       onChange={(event) => {
-                           this.setState({
-                               password: event.target.value
-                           });
-                       }}/>
 
-                <br/>
-                <button className="btn btn-primary" type="submit"
-                        onClick={() => this.props.login(this.state)}>
-                    Save
-                </button>
-                        <button className="btn btn-primary" type="submit"
-                                onClick={() => this.props}>
-                            Back
-                        </button>
                     </div>
+
                 </div>
+
+
+
+            </div>
 
             </div>
             </div>
@@ -144,4 +123,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserDetails);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserDetails));

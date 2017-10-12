@@ -45,7 +45,7 @@ class FileGridList extends Component {
 
         <div className="col-sm-6">
 
-            <table className="table table-striped table-borderless table-condensed table-hover table-bordered">
+            <table className="table table-striped table-condensed table-hover table-bordered">
                     <thead>
                     <tr className="justify-content-md-left">
 
@@ -59,16 +59,20 @@ class FileGridList extends Component {
                     {this.props.files.map((file, index) => {
 
                         if(file.fileparent==this.props.parentFile) {
-
+                            var downloadlink="http://localhost:3001/uploads/"+this.props.userEmail.split('.')[0]+"/"+file.filename
                             return (
                                 <tr className="justify-content-md-left">
 
                                     <td>
+                                        {file.isfile == 'F' ?
 
-                                        <a href="#" className="link-title "
-                                           onClick={() => this.props.openFileFolder(file)}>
-                                        {file.filename}
-                                    </a>
+                                            <a href="#" className="link-title "
+                                               onClick={() => this.props.openFileFolder(file)}>
+                                                {file.filename}
+                                            </a>
+                                            :
+                                            <a href={downloadlink} className="link-title "> {file.filename}</a>
+                                        }
                                             </td>
 
                                     <td>
@@ -78,10 +82,10 @@ class FileGridList extends Component {
                                         </button>
                                     </td>
                                     <td>
-                                        <button className="btn btn-primary" type="submit"
+                                        {/*<button className="btn btn-primary" type="submit"
                                                 onClick={() => this.openModal(file)}>
                                             Share
-                                        </button>
+                                        </button>*/}
                                     </td>
                                 </tr>
                             );
@@ -107,7 +111,7 @@ class FileGridList extends Component {
                                 }}
                             />*/}
                             <Col md={8}>
-                                <input type="text" className="form-control" required="true" autoFocus
+                                <input type="text" className="form-control" required="true" autoFocus placeholder="Enter semi-colon separated emails"
                                        onChange={(event) => {
                                            this.setState({
                                                shareEmail: event.target.value

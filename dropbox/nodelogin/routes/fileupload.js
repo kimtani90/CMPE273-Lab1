@@ -61,53 +61,64 @@ router.post('/delete', function (req, res) {
     var deleteUserFile="delete from userfiles where filepath = '"+filepath+"'";
     console.log("Query deleteFile is:"+deleteUserFile);
 
-    mysql.executeQuery(function(err){
-        if(err){
-            res.send({"status":401});
+    var execQuery='T';
+    if(isfile=='F') {
+        try{
+            fs.rmdirSync(filepath)
         }
-        else
-        {
-            var deleteFile="delete from files where filepath = '"+filepath+"'";
-            console.log("Query deleteFile is:"+deleteFile);
-
-
-            mysql.executeQuery(function(err){
-                if(err){
-                    console.log("Error: data not deleted from userfiles")
-                }
-                else
-                {
-                    console.log("data deleted from userfiles")
-
-                }
-            },deleteFile);
-
-
-            var userlog="insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '"+filename
-                +"' ,'" + filepath +"','"+ isfile +"','" + email +"','" +
-                "File Delete"+ "',NOW())";
-
-
-            mysql.executeQuery(function(err){
-                if(err){
-                    console.log(err)
-                }
-                else
-                {
-                    console.log("userlog inserted....")
-
-                }
-            },userlog);
-
-            if(isfile=='F')
-                fs.rmdirSync(filepath);
-            else
-                fs.unlinkSync(filepath);
-
-
-            res.send({"status":204});
+        catch(err){
+            execQuery='F';
+            res.send({"status": 401, "message": "Folder is not empty!"});
         }
-    },deleteUserFile);
+
+    }
+    else {
+        fs.unlinkSync(filepath);
+
+    }
+
+    if(execQuery=='T') {
+        mysql.executeQuery(function (err) {
+            if (err) {
+                res.send({"status": 401});
+            }
+            else {
+                var deleteFile = "delete from files where filepath = '" + filepath + "'";
+                console.log("Query deleteFile is:" + deleteFile);
+
+
+                mysql.executeQuery(function (err) {
+                    if (err) {
+                        console.log("Error: data not deleted from userfiles")
+                    }
+                    else {
+                        console.log("data deleted from userfiles")
+
+                    }
+                }, deleteFile);
+
+
+                var userlog = "insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '" + filename
+                    + "' ,'" + filepath + "','" + isfile + "','" + email + "','" +
+                    "File Delete" + "',NOW())";
+
+
+                mysql.executeQuery(function (err) {
+                    if (err) {
+                        console.log(err)
+                    }
+                    else {
+                        console.log("userlog inserted....")
+
+
+                    }
+                }, userlog);
+
+
+            }
+            res.send({"status": 204, message: "Deleted Successfully!"});
+        }, deleteUserFile);
+    }
 });
 
 router.post('/upload', upload.single('mypic'), function (req, res) {
@@ -273,74 +284,77 @@ router.post('/sharefile', function (req, res) {
 
     console.log(req.body);
     var userEmail=req.body.email;
-    var shareEmail= req.body.filedata.shareEmail;
-    var file=req.body.filedata.file;
-    var splitedemail = shareEmail.split('.')[0];
-    var splitUserEmail = userEmail.split('.')[0];
+    var shareEmail= req.body.shareEmail;
+
+    var file=req.body.filedata;
+
 
     var filename = file.filename;
-    var filepath = './public/uploads/'+splitedemail+'/'+file.filename;
+
     var fileparent = file.fileparent;
     var isfile = file.isfile;
 
 
-    var filedata={
-        'filename': filename,
-        'filepath':filepath,
-        'fileparent': fileparent,
-        'isfile': isfile
-    };
+    var splitedemail = shareEmail.split('.')[0];
+    var newfilepath = './public/uploads/' + splitedemail + '/' + file.filename;
 
+    console.log(newfilepath)
+    // select * from files where fileparent=filpath
     //copying a file to user's folder
-    fs.createReadStream('./public/uploads/'+splitUserEmail+'/'+filename).pipe(fs.createWriteStream(filepath));
 
+    fs.createReadStream(file.filepath).pipe(fs.createWriteStream(newfilepath));
     // check user already exists
-    var insertFile="insert into files (filename, filepath, fileparent, isfile) values ( '"+filename
-        +"' ,'" + filepath+"' ,'" + fileparent+"','" + isfile+"')";
+    var insertFile = "insert into files (filename, filepath, fileparent, isfile) values ( '" + filename
+        + "' ,'" + newfilepath + "' ,'" + fileparent + "','" + isfile + "')";
 
-    console.log("Query is:"+insertFile);
+    console.log("Query is:" + insertFile);
 
 
-    mysql.executeQuery(function(err){
-        if(err){
-            res.send({"status":401});
+    mysql.executeQuery(function (err) {
+        if (err) {
+            console.log("Error inserting in files...")
+           // console.log(err)
+            res.send({"status": 401, "message": "File already shared with the user!"});
         }
-        else
-        {
-            var insertUserFile="insert into userfiles  (filepath, email)  values ( '"+filepath+"' ,'" + shareEmail+"')";
-            console.log("Query insertUserFile is:"+insertUserFile);
+        else {
+
+            var insertUserFile = "insert into userfiles  (filepath, email)  values ( '" + newfilepath + "' ,'" + shareEmail + "')";
+            console.log("Query insertUserFile is:" + insertUserFile);
 
 
-            mysql.executeQuery(function(err){
-                if(err){
+            mysql.executeQuery(function (err) {
+                if (err) {
                     console.log("Error: data not inserted in userfiles")
                 }
-                else
-                {
+                else {
+
                     console.log("data inserted in userfiles")
 
+                    var userlog = "insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '" + filename
+                        + "' ,'" + newfilepath + "','" + isfile + "','" + userEmail + "','" +
+                        "File Shared with " + shareEmail + "',NOW())";
+
+
+                    mysql.executeQuery(function (err) {
+                        if (err) {
+                            console.log("Error inserting userlog....")
+                        }
+                        else {
+
+                            console.log("userlog inserted....")
+                            res.send({"status": 201, "message": "File shared with the user!"});
+                        }
+                    }, userlog);
+
                 }
-            },insertUserFile);
-
-            var userlog="insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '"+filename
-                +"' ,'" + filepath +"','"+ isfile +"','" + userEmail +"','" +
-                "File Shared with "+shareEmail+ "',NOW())";
+            }, insertUserFile);
 
 
-            mysql.executeQuery(function(err){
-                if(err){
-                    console.log("Error inserting userlog....")
-                }
-                else
-                {
-                    console.log("userlog inserted....")
 
-                }
-            },userlog);
 
-            res.send({"status":201});
         }
-    },insertFile);
+    }, insertFile);
+
 
 
 

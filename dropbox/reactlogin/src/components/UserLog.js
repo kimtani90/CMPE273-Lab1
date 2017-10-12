@@ -6,7 +6,8 @@ import dropbox from "./dropboxplus.gif";
 import {connect} from 'react-redux';
 import {Row,Col,ListGroupItem} from 'react-bootstrap';
 import {afterlogin} from "../actions/index";
-//import { makeData, Logo, Tips } from "./Utils";
+import { Route, withRouter } from 'react-router-dom';
+import Header from "./Header";
 
 // Import React Table
 import ReactTable from "react-table";
@@ -16,7 +17,7 @@ import "react-table/react-table.css";
 class UserLog extends Component {
 
     componentWillMount(){
-        const data='kimtani89@gmail.com'
+        const data=localStorage.getItem("email")
         API.getState(data)
             .then((res) => {
                 console.log(res)
@@ -36,6 +37,8 @@ class UserLog extends Component {
     render() {
         console.log(this.props.userdata.userLog)
         return (
+            <div>
+                <Header/>
             <div className="jumbotron">
                 <div className="container-fluid row justify-content-md-center">
 
@@ -99,9 +102,15 @@ class UserLog extends Component {
 
 
                     </div>
-
+                        <br/>
+                        <button className="btn btn-primary" type="submit"
+                                onClick={() => this.props.history.push("/files")}>
+                            Back
+                        </button>
                     </div>
+
                 </div>
+            </div>
             </div>
         );
     }
@@ -120,4 +129,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserLog);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserLog));

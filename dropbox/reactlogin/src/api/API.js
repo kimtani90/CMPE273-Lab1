@@ -12,9 +12,11 @@ export const doLogin = (payload) =>
             'Content-Type': 'application/json'
         },
         /*credentials:'include',*/
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        credentials:'include'
     }).then(res => {
-        return res.status;
+
+        return res.json();
     })
         .catch(error => {
             console.log("This is error");
@@ -28,7 +30,8 @@ export const createUser = (payload) =>
             ...headers,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        credentials:'include'
     }).then(res => {
         console.log(res.status);
         return res.status;
@@ -60,7 +63,8 @@ export const getState = (email) =>
 export const uploadFile = (payload) =>
     fetch(`${api}/files/upload`, {
         method: 'POST',
-        body: payload
+        body: payload,
+        credentials:'include'
     }).then(res => {
         return res.json();
     }).catch(error => {
@@ -75,7 +79,8 @@ export const deleteFile = (file) =>
             ...headers,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(file)
+        body: JSON.stringify(file),
+        credentials:'include'
     }).then(res => {
         return res.json();
     }).catch(error => {
@@ -90,7 +95,8 @@ export const makeFolder = (folder) =>
             ...headers,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(folder)
+        body: JSON.stringify(folder),
+        credentials:'include'
     }).then(res => {
         return res.json();
     }).catch(error => {
@@ -105,9 +111,26 @@ export const shareFile = (filedata) =>
             ...headers,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(filedata)
+        body: JSON.stringify(filedata),
+        credentials:'include'
     }).then(res => {
         return res.json();
+    }).catch(error => {
+        console.log("This is error");
+        return error;
+    });
+
+
+export const logout = () =>
+    fetch(`${api}/users/logout`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        credentials:'include'
+    }).then(res => {
+        return res.status;
     }).catch(error => {
         console.log("This is error");
         return error;

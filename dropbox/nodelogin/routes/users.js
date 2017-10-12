@@ -160,7 +160,7 @@ router.post('/', function (req, res) {
         if(err){
             throw err;
 
-            res.status(401).send();
+            res.send({status:401});
         }
         else
         {
@@ -179,7 +179,7 @@ router.post('/', function (req, res) {
                     else
                     {
                         console.log("last login inserted....")
-                        res.status(201).send();
+                        res.send({"status":201, "email" :reqEmail});
 
                     }
                 },insertUser);
@@ -187,7 +187,7 @@ router.post('/', function (req, res) {
             else {
 
                 console.log("Invalid Login");
-                res.status(401).send();
+                res.send({status:401});
             }
         }
     },getUser);
@@ -240,6 +240,7 @@ router.post('/logout', function (req, res) {
 
     req.session.destroy();
     console.log('Session destroyed');
+    res.status(201).send();
 
 });
 

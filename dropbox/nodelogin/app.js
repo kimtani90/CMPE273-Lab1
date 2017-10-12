@@ -12,10 +12,6 @@ var session = require('client-sessions');
 
 var app = express();
 
-//Enable CORS
-app.use(cors());
-
-
 app.use(session({
     cookieName: 'session',
     secret: 'cmpe273_dropbox_string',
@@ -25,6 +21,15 @@ app.use(session({
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+
+
+var corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions))
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

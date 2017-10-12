@@ -17,16 +17,14 @@ class Container extends Component {
     login = (userdata) =>{
 
         API.doLogin(userdata)
-            .then((status)  => {
+            .then((res)  => {
 
-                console.log(status);
+                if (res.status == 201) {
 
-                if (status == 201) {
-
-
+                    localStorage.setItem("email", res.email )
                     this.props.history.push("/files");
 
-                } else if (status == 401) {
+                } else if (res.status == 401) {
                     this.setState({
 
                         message: "Wrong username or password. Try again..!!"
