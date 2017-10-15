@@ -5,7 +5,9 @@ import {Row,Col,ListGroupItem} from 'react-bootstrap';
 
 class RightNavBar extends Component {
 
-    state = { isModalOpen: false, foldername:'', fileparent:'', isfile:'F' }
+    state = { isModalOpen: false, foldername:'', fileparent:'', isfile:'F' , shareEmail:'', clickSharedFolder:false}
+
+
     openModal() {
         this.setState({ isModalOpen: true , fileparent:this.props.parentFile})
     }
@@ -15,10 +17,14 @@ class RightNavBar extends Component {
 
         {data!=""?
 
-            ( data.foldername!=""?this.props.makeFolder(data):'')
-                :''}
+            ( data.foldername!="" ?(data.shareEmail!=""? this.props.makeSharedFolder(data):this.props.makeFolder(data))
+            :''):''}
 
-        this.setState({ isModalOpen: false})
+        this.setState({ isModalOpen: false, clickSharedFolder: false})
+    }
+
+    openSharedFolderModal() {
+        this.setState({ isModalOpen: true , clickSharedFolder: true})
     }
 
     style = {
@@ -33,18 +39,19 @@ class RightNavBar extends Component {
     };
 
     render(){
-
+console.log(this.props.parentFile)
         return(
         <div className="col-sm-2 sidenav">
-
+            { this.props.parentFile==""?
                 <button className="btn btn-primary btn-block" type="submit"
-                        /*onClick={this.props.makeFolder}*/>
-                    Make Group
-                </button>
+                        onClick={() => this.openSharedFolderModal()}>
+                    New Shared Folder
+                </button>:''
+            }
                 <hr/>
             <button className="btn btn-primary btn-block" type="submit"
                     onClick={() => this.openModal()}>
-                Make Folder
+                New Folder
             </button>
             <br/>
             <Modal isOpen={this.state.isModalOpen} style={this.style} onClose={() => this.closeModal()}>
@@ -61,7 +68,20 @@ class RightNavBar extends Component {
                         </Col>
 
                     </Row>
+                    <br/>
+                    {this.state.clickSharedFolder==true?
 
+                    <Row className="show-grid">
+                        <Col md={4}>Share With Email:</Col>
+                        <Col md={8}>
+                            <input type="email" className="form-control" required="true" placeholder="Enter (;) seperated emails"
+                                   onChange={(event) => {
+                                       this.setState({
+                                           shareEmail: event.target.value
+                                       });
+                                   }}/>
+                        </Col>
+                    </Row>:''}
                 </ListGroupItem>
                 <br/>
                 <div className=" row justify-content-md-center">

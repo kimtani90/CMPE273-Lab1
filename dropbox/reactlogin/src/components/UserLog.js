@@ -96,7 +96,7 @@ class UserLog extends Component {
                                     }
 
                                 ]}
-                                defaultPageSize={10}
+                                defaultPageSize={5}
                                 className="-striped -highlight"
                             />
 

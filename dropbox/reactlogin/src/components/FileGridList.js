@@ -49,7 +49,8 @@ class FileGridList extends Component {
                     <thead>
                     <tr className="justify-content-md-left">
 
-                        <th>File Name</th>
+                        <th>Type</th>
+                        <th>Name</th>
 
                     </tr>
                     </thead>
@@ -64,6 +65,13 @@ class FileGridList extends Component {
                                 <tr className="justify-content-md-left">
 
                                     <td>
+                                        {file.isfile=='T'?
+                                        <span className="fa fa-file"></span>:
+                                        <span className="fa fa-folder"></span>
+                                        }
+                                    </td>
+                                    <td>
+
                                         {file.isfile == 'F' ?
 
                                             <a href="#" className="link-title "
@@ -82,10 +90,10 @@ class FileGridList extends Component {
                                         </button>
                                     </td>
                                     <td>
-                                        {/*<button className="btn btn-primary" type="submit"
+                                        <button className="btn btn-primary" type="submit"
                                                 onClick={() => this.openModal(file)}>
                                             Share
-                                        </button>*/}
+                                        </button>
                                     </td>
                                 </tr>
                             );

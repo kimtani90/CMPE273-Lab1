@@ -84,11 +84,12 @@ router.get('/', function (req, res) {
                 userdetails.firstname=results[0].firstname;
                 userdetails.lastname=results[0].lastname;
                 userdetails.email=results[0].email;
-                userdetails.contacto=results[0].contact;
+                userdetails.contactno=results[0].contact;
                 userdetails.interests=results[0].interests;
                 userdetails.lastlogin=results[0].lastlogin;
 
-                var getFiles="select f.* from files f, userfiles u where u.email='"+email+"' and f.filepath=u.filepath";
+                var getFiles="select distinct f.* from files f, userfiles u where u.email='"+email+"' " +
+                                "and (f.filepath=u.filepath or u.filepath=f.fileparent)";
                 console.log("Query is:"+getUser);
 
                 mysql.fetchData(function(err,fileresults){
@@ -230,6 +231,38 @@ router.post('/signup', function (req, res) {
 
         }
     },insertUser);
+
+
+});
+
+
+
+router.post('/updateuser', function (req, res) {
+console.log(req.body)
+    var firstname = req.body.firstname;
+    var lastname = req.body.lastname;
+    var contact = req.body.contactno;
+    var interests = req.body.interests;
+    var email = req.body.email;
+
+
+    var updateUser="update users set firstname = "+"'"+ firstname+"'"+", lastname="+ "'"+lastname+"'"+", contact="+
+        "'"+contact+"'"+", interests="+"'"+interests+"'"+" where email="+"'"+email+"'";
+
+    console.log("Query is:"+updateUser);
+
+    mysql.executeQuery(function(err){
+        if(err){
+            console.log(err);
+            res.status(401).send();
+        }
+        else
+        {
+
+            res.status(201).send();
+
+        }
+    },updateUser);
 
 
 });

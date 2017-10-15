@@ -104,6 +104,23 @@ export const makeFolder = (folder) =>
         return error;
     });
 
+
+export const updateUser = (data) =>
+    fetch(`${api}/users/updateuser`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+        credentials:'include'
+    }).then(res => {
+        return res.status;
+    }).catch(error => {
+        console.log("This is error");
+        return error;
+    });
+
 export const shareFile = (filedata) =>
     fetch(`${api}/files/sharefile`, {
         method: 'POST',

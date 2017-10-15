@@ -290,13 +290,13 @@ router.post('/sharefile', function (req, res) {
 
 
     var filename = file.filename;
-
+    var filepath = file.filepath;
     var fileparent = file.fileparent;
     var isfile = file.isfile;
 
 
     var splitedemail = shareEmail.split('.')[0];
-    var newfilepath = './public/uploads/' + splitedemail + '/' + file.filename;
+   /* var newfilepath = './public/uploads/' + splitedemail + '/' + file.filename;
 
     console.log(newfilepath)
     // select * from files where fileparent=filpath
@@ -318,42 +318,45 @@ router.post('/sharefile', function (req, res) {
         }
         else {
 
-            var insertUserFile = "insert into userfiles  (filepath, email)  values ( '" + newfilepath + "' ,'" + shareEmail + "')";
-            console.log("Query insertUserFile is:" + insertUserFile);
+   */
+        var insertUserFile = "insert into userfiles  (filepath, email)  values ( '" + filepath + "' ,'" + shareEmail + "')";
+        console.log("Query insertUserFile is:" + insertUserFile);
 
 
-            mysql.executeQuery(function (err) {
-                if (err) {
-                    console.log("Error: data not inserted in userfiles")
-                }
-                else {
+        mysql.executeQuery(function (err) {
+            if (err) {
+                res.send({"status": 401, "message": "Error sharing file with the user!"});
+            }
+            else {
 
-                    console.log("data inserted in userfiles")
+                console.log("data inserted in userfiles")
 
-                    var userlog = "insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '" + filename
-                        + "' ,'" + newfilepath + "','" + isfile + "','" + userEmail + "','" +
-                        "File Shared with " + shareEmail + "',NOW())";
-
-
-                    mysql.executeQuery(function (err) {
-                        if (err) {
-                            console.log("Error inserting userlog....")
-                        }
-                        else {
-
-                            console.log("userlog inserted....")
-                            res.send({"status": 201, "message": "File shared with the user!"});
-                        }
-                    }, userlog);
-
-                }
-            }, insertUserFile);
+                var userlog = "insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '" + filename
+                    + "' ,'" + filepath + "','" + isfile + "','" + userEmail + "','" +
+                    "File Shared with " + shareEmail + "',NOW())";
 
 
+                mysql.executeQuery(function (err) {
+                    if (err) {
+                        console.log("Error inserting userlog....")
+                    }
+                    else {
+
+                        console.log("userlog inserted....")
+                        res.send({"status": 201, "message": "File shared with the user!"});
+                    }
+                }, userlog);
+
+            }
+        }, insertUserFile);
+/*
 
 
-        }
-    }, insertFile);
+
+
+    }
+}, insertFile);
+*/
 
 
 
