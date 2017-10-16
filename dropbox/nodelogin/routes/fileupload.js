@@ -7,8 +7,6 @@ var fs = require('fs');
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        console.log("Hellloooonnnn")
-        console.log(req.email);
 
         cb(null, './public/uploads/')
     },
@@ -30,22 +28,8 @@ router.get('/',  function (req, res) {
     console.log(req.query.filedata);
     var filedata=req.query.filedata;
 
-    /*var resArr = [];
-
-    glob(filedata.filepath, function (er, files) {
-        console.log(files);
-        var resArr = files.map(function (file) {
-            console.log(file);
-            var imgJSON = {};
-            imgJSON.img = file.split('/')[2];
-            imgJSON.cols = 2  ;
-            return imgJSON;
-        });
-*/
     console.log(filedata);
     res.download(filedata.filepath, filedata.filename);
-   // res.sendFile("/home/kimtani90/SJSU_Sem2/CMPE 273/React/CMPE273-Lab1/dropbox/nodelogin/public/uploads/kimtani89@gmail/Insurance.docx")
-
 
 
 });
@@ -58,67 +42,87 @@ router.post('/delete', function (req, res) {
     var filepath= req.body.file.filepath;
     var email=req.body.email;
 
-    var deleteUserFile="delete from userfiles where filepath = '"+filepath+"'";
-    console.log("Query deleteFile is:"+deleteUserFile);
+    var findAdmin="select * from userfiles where email='"+email+"' and filepath='"+filepath+"' and admin='T'";
+    console.log("Query is:"+findAdmin);
 
-    var execQuery='T';
-    if(isfile=='F') {
-        try{
-            fs.rmdirSync(filepath)
+    mysql.fetchData(function(err,results) {
+        if (err) {
+            throw err;
+
+            res.send({status: 401});
         }
-        catch(err){
-            execQuery='F';
-            res.send({"status": 401, "message": "Folder is not empty!"});
-        }
+        else {
 
-    }
-    else {
-        fs.unlinkSync(filepath);
+            if (results.length > 0) {
 
-    }
 
-    if(execQuery=='T') {
-        mysql.executeQuery(function (err) {
-            if (err) {
-                res.send({"status": 401});
+                var deleteUserFile = "delete from userfiles where filepath = '" + filepath + "'";
+                console.log("Query deleteFile is:" + deleteUserFile);
+
+                var execQuery = 'T';
+                if (isfile == 'F') {
+                    try {
+                        fs.rmdirSync(filepath)
+                    }
+                    catch (err) {
+                        execQuery = 'F';
+                        res.send({"status": 401, "message": "Folder is not empty!"});
+                    }
+
+                }
+                else {
+                    fs.unlinkSync(filepath);
+
+                }
+
+                if (execQuery == 'T') {
+                    mysql.executeQuery(function (err) {
+                        if (err) {
+                            res.send({"status": 401});
+                        }
+                        else {
+                            var deleteFile = "delete from files where filepath = '" + filepath + "'";
+                            console.log("Query deleteFile is:" + deleteFile);
+
+
+                            mysql.executeQuery(function (err) {
+                                if (err) {
+                                    console.log("Error: data not deleted from userfiles")
+                                }
+                                else {
+                                    console.log("data deleted from userfiles")
+
+                                }
+                            }, deleteFile);
+
+
+                            var userlog = "insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '" + filename
+                                + "' ,'" + filepath + "','" + isfile + "','" + email + "','" +
+                                "File Delete" + "',NOW())";
+
+
+                            mysql.executeQuery(function (err) {
+                                if (err) {
+                                    console.log(err)
+                                }
+                                else {
+                                    console.log("userlog inserted....")
+
+
+                                }
+                            }, userlog);
+
+
+                        }
+                        res.send({"status": 204, message: "Deleted Successfully!"});
+                    }, deleteUserFile);
+                }
             }
             else {
-                var deleteFile = "delete from files where filepath = '" + filepath + "'";
-                console.log("Query deleteFile is:" + deleteFile);
-
-
-                mysql.executeQuery(function (err) {
-                    if (err) {
-                        console.log("Error: data not deleted from userfiles")
-                    }
-                    else {
-                        console.log("data deleted from userfiles")
-
-                    }
-                }, deleteFile);
-
-
-                var userlog = "insert into userlog (filename, filepath, isfile, email, action, actiontime) values ( '" + filename
-                    + "' ,'" + filepath + "','" + isfile + "','" + email + "','" +
-                    "File Delete" + "',NOW())";
-
-
-                mysql.executeQuery(function (err) {
-                    if (err) {
-                        console.log(err)
-                    }
-                    else {
-                        console.log("userlog inserted....")
-
-
-                    }
-                }, userlog);
-
-
+                res.send({"status": 402, message: "You need admin rights to delete the file/folder!"});
             }
-            res.send({"status": 204, message: "Deleted Successfully!"});
-        }, deleteUserFile);
-    }
+        }
+    },findAdmin);
 });
 
 router.post('/upload', upload.single('mypic'), function (req, res) {
@@ -152,16 +156,18 @@ router.post('/upload', upload.single('mypic'), function (req, res) {
 
     mysql.executeQuery(function(err){
         if(err){
+            console.log(err)
             res.send({"status":401});
         }
         else
         {
-            var insertUserFile="insert into userfiles  (filepath, email)  values ( '"+filepath+"' ,'" + req.body.email+"')";
+            var insertUserFile="insert into userfiles  (filepath, email, admin)  values ( '"+filepath+"' ,'" + req.body.email+"' ,'T')";
             console.log("Query insertUserFile is:"+insertUserFile);
 
 
             mysql.executeQuery(function(err){
                 if(err){
+                    console.log(err)
                    console.log("Error: data not inserted in userfiles")
                 }
                 else
@@ -179,6 +185,7 @@ router.post('/upload', upload.single('mypic'), function (req, res) {
 
             mysql.executeQuery(function(err){
                 if(err){
+                    console.log(err)
                     console.log("Error inserting userlog....")
                 }
                 else
@@ -204,10 +211,11 @@ router.post('/upload', upload.single('mypic'), function (req, res) {
 
 
 router.post('/makefolder', function (req, res) {
-
+console.log(req.body)
     var splitedemail = req.body.email.split('.')[0];
-    console.log(req.body);
+
     var filename = req.body.folder.foldername;
+
     var filepath = './public/uploads/'+splitedemail+'/'+filename;
     var fileparent = req.body.folder.fileparent;
     var isfile = req.body.folder.isfile;
@@ -235,16 +243,18 @@ router.post('/makefolder', function (req, res) {
 
     mysql.executeQuery(function(err){
         if(err){
+            console.log(err)
             res.send({"status":401});
         }
         else
         {
-            var insertUserFile="insert into userfiles  (filepath, email)  values ( '"+filepath+"' ,'" + req.body.email+"')";
+            var insertUserFile="insert into userfiles  (filepath, email, admin)  values ( '"+filepath+"' ,'" + req.body.email+"' ,'T')";
             console.log("Query insertUserFile is:"+insertUserFile);
 
 
             mysql.executeQuery(function(err){
                 if(err){
+                    console.log(err)
                     console.log("Error: data not inserted in userfiles")
                 }
                 else

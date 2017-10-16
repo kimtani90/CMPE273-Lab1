@@ -12,6 +12,7 @@ CREATE TABLE userfiles (
     ID int NOT NULL AUTO_INCREMENT,
     filepath varchar(500),
     email varchar(500),
+    admin varchar(20),
     PRIMARY KEY (ID),
 FOREIGN KEY (filepath) REFERENCES files(filepath),
 FOREIGN KEY (email) REFERENCES users(email)

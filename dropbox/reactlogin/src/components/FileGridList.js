@@ -12,9 +12,9 @@ class FileGridList extends Component {
 
 
 
-    state = { isModalOpen: false, shareEmail:'', file:'' , group:[]}
-    openModal(file) {
-        this.setState({ isModalOpen: true , file: file})
+    state = { isModalOpen: false, shareEmail:'', file:'' , group:[], downloadLink:''}
+    openModal(file, downloadLink) {
+        this.setState({ isModalOpen: true , file: file, downloadLink:downloadLink, showLink:false})
     }
 
     closeModal(data) {
@@ -24,7 +24,11 @@ class FileGridList extends Component {
 
             ( data.shareEmail!=""?this.props.sharefile(data):'')
             :''}
-        this.setState({ isModalOpen: false })
+        this.setState({ isModalOpen: false, showLink: true })
+    }
+
+    generateLink(){
+        this.setState({ showLink: true })
     }
 
     style = {
@@ -91,7 +95,7 @@ class FileGridList extends Component {
                                     </td>
                                     <td>
                                         <button className="btn btn-primary" type="submit"
-                                                onClick={() => this.openModal(file)}>
+                                                onClick={() => this.openModal(file, downloadlink)}>
                                             Share
                                         </button>
                                     </td>
@@ -105,19 +109,8 @@ class FileGridList extends Component {
                     <ListGroupItem>
 
                         <Row className="show-grid">
-                            <Col md={4}>Share with Email:</Col>
+                            <Col md={4}>Share With Email:</Col>
 
-                            {/*<Tokenizer
-
-                                onTokenAdd={function(token) {
-                                    this.setState({
-                                       group:{ ...this.state.group,
-                                                token
-                                       }
-                                    })
-                                    console.log('token added: ', token);
-                                }}
-                            />*/}
                             <Col md={8}>
                                 <input type="text" className="form-control" required="true" autoFocus placeholder="Enter semi-colon separated emails"
                                        onChange={(event) => {
@@ -126,6 +119,31 @@ class FileGridList extends Component {
                                            });
                                        }}/>
                             </Col>
+
+                        </Row>
+                        <Row className="show-grid">
+                            <Col md={8}>
+
+                            </Col>
+
+                            <Col md={4}>
+
+                                <a href="#" className="link-title "
+                                   onClick={() => this.generateLink()}>
+                                    Generate Link
+                                </a>
+                            </Col>
+
+                        </Row>
+
+                        <Row className="show-grid">
+
+                                {
+                                    this.state.showLink==true?
+                                        <h6><small>{this.state.downloadLink}</small></h6>
+                                        :''
+                                }
+
 
                         </Row>
 

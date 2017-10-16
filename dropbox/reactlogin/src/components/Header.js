@@ -33,16 +33,20 @@ class Header extends Component {
                     <div className="container-fluid">
                         <div className="navbar-header">
                             <img className="" src={dropboxtitle}
-                                 alt="" height="50"/>
+                                 alt="" height="50" onClick={() => this.props.history.push("/files")}/>
                         </div>
                         <ul className="nav navbar-nav">
                             <div className="row">
 
+                                <li className="active">Welcome <a href="#" onClick={() => this.props.history.push("/userdetails")}>
+                                     {localStorage.getItem("email").split('@')[0]}</a>,</li>
+                                <div className="col-md-1" ></div>
                                 <li className="active"><a href="#" onClick={() => this.props.history.push("/files")}>
                                     Home</a></li>
+
                                 <div className="col-md-1" ></div>
                                 <li className="active"><a href="#" onClick={() => this.logout()}>
-                                    Logout</a></li>
+                                Logout</a></li>
                             </div>
                         </ul>
                     </div>

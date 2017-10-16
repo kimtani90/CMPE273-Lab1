@@ -86,6 +86,12 @@ class FileUpload extends Component {
                         message: res.message
                     });
                 }
+                else if (res.status == 402) {
+                    this.setState({
+
+                        message: res.message
+                    });
+                }
             });
 
     }

@@ -12,20 +12,24 @@ class Calculator extends React.Component {
             .then((res) => {
             console.log(res.result);
 
-                    this.setState({
-                        input:'',
-                        displayValue:res.result
+            if(res.status===201) {
+                this.setState({
+                    input: '',
+                    displayValue: res.result,
+                    gotresult: true
 
-                    });
-                    /*API.getResult()
-                        .then((data) => {
-                            this.setState({
-                                input:'',
-                                displayValue:data
+                });
+            }
 
-                            });
-                        });*/
-
+            else if(res.status===401){
+                this.setState({
+                    input:'',
+                    operator:'',
+                    num:'',
+                    displayValue:'0',
+                    message:res.message
+                });
+            }
 
             });
 
@@ -35,17 +39,19 @@ class Calculator extends React.Component {
         input:'',
         operator:'',
         num:'',
-        displayValue:'0'
+        displayValue:'0',
+        gotresult:false,
+        message:''
     }
 
     enterDigit(digit){
 
         this.setState(
         {
-            ...this.state,
+            message:'',
             input: this.state.input+digit,
             num:digit,
-            displayValue: (this.state.displayValue==0 || (  this.state.operator!='' && this.state.num=='') ?'':this.state.displayValue)+digit
+            displayValue: (this.state.displayValue==0 || this.state.gotresult==true || (  this.state.operator!='' && this.state.num=='') ?'':this.state.displayValue)+digit
         });
     }
 
@@ -54,7 +60,7 @@ class Calculator extends React.Component {
 
         this.setState(
             {
-                ...this.state,
+
                 operator:op,
                 num:'',
                 input: this.state.input + op
@@ -68,7 +74,8 @@ class Calculator extends React.Component {
                 input:'',
                 operator:'',
                 num:'',
-                displayValue:'0'
+                displayValue:'0',
+                message:''
             });
     }
 
@@ -77,8 +84,15 @@ class Calculator extends React.Component {
          const {displayValue}=this.state;
 
         return (
+            <div className="row justify-content-md-center">
+
             <div className="calculator">
-                <div className="calculator-display">{displayValue}</div>
+
+                <br/><br/><br/>
+                <div className="calculator-display">
+                    {this.state.message==""?
+                        displayValue:
+                        this.state.message}</div>
                 <div className="calculator-keypad">
                     <div className="input-keys">
                         <div className="function-keys">
@@ -107,6 +121,7 @@ class Calculator extends React.Component {
                         <button className="calculator-key key-equals" onClick={()=>this.handleSubmit(this.state)}>=</button>
                     </div>
                 </div>
+            </div>
             </div>
         )
     }
